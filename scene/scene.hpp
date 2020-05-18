@@ -20,13 +20,6 @@ struct scene_model : scene_base
     void setup_data(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
     void frame_draw(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
 
-
-    // visual representation of a surface
-    //  Surface is a class attribute to be initialized in setup_data and used in frame_draw
-    vcl::mesh_drawable surface;
-
-    // Exercise 1.2: add a sphere
-    vcl::mesh_drawable sphere;
 };
 
 

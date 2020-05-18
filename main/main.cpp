@@ -2,10 +2,8 @@
 // Include VCL library
 #include "vcl/vcl.hpp"
 
-// Include common part for exercises
 #include "main/helper_scene/helper_scene.hpp"
 
-// Include exercises
 #include "scene/scene.hpp"
 
 

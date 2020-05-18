@@ -85,7 +85,11 @@ void draw(const mesh_drawable& drawable, const camera_scene& camera, GLuint shad
 
     vcl::draw(drawable.data); opengl_debug();
 
-
+    if(texture_id!=0){
+        image_raw white{1,1,image_color_type::rgba,{255,255,255,255}};
+        GLuint texture_white = create_texture_gpu(white);
+        glBindTexture(GL_TEXTURE_2D, texture_white);
+    }
 }
 
 }
