@@ -20,6 +20,10 @@ struct scene_model : scene_base
     void setup_data(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
     void frame_draw(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
 
+    void keyboard_input(scene_structure& scene, GLFWwindow* window, int key, int scancode, int action, int mods);
+
+    vcl::timer_basic timer;
+    float dt;
     vcl::hierarchy_mesh_drawable Truck;
 };
 
