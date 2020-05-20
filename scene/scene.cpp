@@ -13,6 +13,7 @@ using namespace vcl;
 void scene_model::setup_data(std::map<std::string,GLuint>& shaders, scene_structure& , gui_structure& )
 {
     set_up_static_models();
+    set_up_truck(Truck, shaders["mesh"]);
 }
 
 
@@ -21,6 +22,9 @@ void scene_model::setup_data(std::map<std::string,GLuint>& shaders, scene_struct
 void scene_model::frame_draw(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui)
 {
     draw_static_models(shaders, scene, gui);
+
+    Truck.update_local_to_global_coordinates();
+    draw(Truck, scene.camera);
 }
 
 

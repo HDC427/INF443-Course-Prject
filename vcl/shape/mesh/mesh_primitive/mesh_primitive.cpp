@@ -277,11 +277,14 @@ mesh mesh_primitive_disc(float radius, const vec3& p0, const vec3& n, size_t N)
         disc.connectivity.push_back( {static_cast<unsigned int>( k ),
                                       static_cast<unsigned int>((k+1)%N),
                                       static_cast<unsigned int>( N )});
+
+        disc.texture_uv.push_back({0.5f+0.5f*std::cos(theta),0.5f+0.5f*std::sin(theta)});
     }
 
     // add central point
     disc.position.push_back(p0);
     disc.normal.push_back(n);
+    disc.texture_uv.push_back({0.5,0.5});
 
     return disc;
 
