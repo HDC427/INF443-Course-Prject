@@ -26,7 +26,7 @@ struct scene_model : scene_base
 
     timer_basic timer;
     float dt;
-    Collision::sollid_heirarchy Truck;
+    hierarchy_mesh_drawable Truck;
 };
 
 

@@ -22,11 +22,12 @@ void draw_static_models(std::map<std::string,GLuint>& shaders, scene_structure& 
     draw(Wall2, scene.camera, shaders["mesh"]);
 }
 
-void set_up_truck(Collision::sollid_heirarchy& Truck, GLuint shader){
+void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
     const float S = 0.1;
 
     mesh_drawable body = mesh_primitive_parallelepiped({-S,-S/2,0}, {2*S,0,0}, {0,S,0}, {0,0,S/2});
     body.uniform.color = {0,1,0};
+    body.box = new Collision::rectangle({-2.5*S,-S/2,0}, {-2.5*S,S/2,0}, {S,-S/2,0}, {S,S/2,0});
     Truck.add(body, "body");
 
     mesh_drawable head = mesh_primitive_parallelepiped({0,-S/2,0}, {-S/2,0,0}, {0,S,0}, {0,0,S});
@@ -66,6 +67,5 @@ void set_up_truck(Collision::sollid_heirarchy& Truck, GLuint shader){
 
     Truck.set_shader_for_all_elements(shader);
     
-    // set up the collision box
-    Truck.box = new Collision::rectangle({-2.5*S,-S/2}, {-2.5*S,S/2}, {S,-S/2}, {S,S/2});
+    
 }

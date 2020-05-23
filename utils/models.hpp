@@ -15,4 +15,4 @@ void draw_static_models(std::map<std::string,GLuint>& shaders, scene_structure& 
 /*******mobile models********/
 #define S_TRUCK 0.1
 
-void set_up_truck(Collision::sollid_heirarchy& Truck, GLuint shader);
+void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader);

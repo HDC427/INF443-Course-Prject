@@ -7,6 +7,7 @@
 #include "mesh_drawable_gpu_data/mesh_drawable_gpu_data.hpp"
 #include "mesh_drawable_uniform/mesh_drawable_uniform.hpp"
 
+#include "utils/collision_box.hpp"
 
 namespace vcl
 {
@@ -36,6 +37,11 @@ public:
      * Warning: new_normal is expected to have the same size (or less) than the initialized one */
     void update_normal(const vcl::buffer<vec3>& new_normal);
 
+    /** Collision detection */
+    Collision::collision_box *box = NULL;
+    void update_collision_box(const vec3& transalation);
+    void update_collision_box(const mat3& rotation);
+    bool collide_border(GLfloat L, GLfloat W);
 
     /** Data attributes: VAO and VBO as well as the number of triangle */
     mesh_drawable_gpu_data data;

@@ -92,4 +92,17 @@ void draw(const mesh_drawable& drawable, const camera_scene& camera, GLuint shad
     }
 }
 
+
+void mesh_drawable::update_collision_box(const vec3& translation){
+    box->update_position(translation);
+}
+
+void mesh_drawable::update_collision_box(const mat3& rotation){
+    box->update_position(rotation);
+}
+
+bool mesh_drawable::collide_border(GLfloat L, GLfloat W){
+    return box->collide_border(L, W);
+}
+
 }
