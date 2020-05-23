@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vcl/vcl.hpp"
-#include "main/helper_scene/helper_scene.hpp"
+#include "scene.hpp"
+#include "utils/models.hpp"
 
 using namespace vcl;
