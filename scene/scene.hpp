@@ -1,7 +1,9 @@
 #pragma once
 
 #include "main/scene_base/base.hpp"
+#include "utils/collision_box.hpp"
 
+using namespace vcl;
 
 struct scene_model : scene_base
 {
@@ -22,9 +24,9 @@ struct scene_model : scene_base
 
     void keyboard_input(scene_structure& scene, GLFWwindow* window, int key, int scancode, int action, int mods);
 
-    vcl::timer_basic timer;
+    timer_basic timer;
     float dt;
-    vcl::hierarchy_mesh_drawable Truck;
+    hierarchy_mesh_drawable Truck;
 };
 
 

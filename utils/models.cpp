@@ -2,25 +2,24 @@
 
 using namespace vcl;
 
-mesh_drawable Floor, Wall, wheel;
-hierarchy_mesh_drawable Truck;
+mesh_drawable Floor, Wall1, Wall2, wheel;
 GLuint Texture_wood, Texture_wheel;
 
 void set_up_static_models(){
+    float S = S_ROOM;
     Texture_wood = create_texture_gpu( image_load_png("textures/Wood.png") );
     Texture_wheel = create_texture_gpu( image_load_png("textures/Wheel.png"));
 
-    Floor = mesh_primitive_quad();
+    Floor = mesh_primitive_quad({-S,-S/2,0}, {S,-S/2,0}, {S,S/2,0}, {-S,S/2,0});
     Floor.texture_id = Texture_wood;
-    Wall = mesh_primitive_quad({-0.5, 0.5, 0}, {0.5, 0.5, 0}, {0.5, 0.5, 1}, {-0.5, 0.5, 1});
+    Wall1 = mesh_primitive_quad({-S,S/2,0}, {S,S/2,0}, {S,S/2,S}, {-S,S/2,S});
+    Wall2 = mesh_primitive_quad({-S,-S/2,0}, {-S,S/2,0}, {-S,S/2,1}, {-S,-S/2,1});
 }
 
 void draw_static_models(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui){
     draw(Floor, scene.camera, shaders["mesh"]);
-    Wall.uniform.transform.rotation = {1,0,0, 0,1,0, 0,0,1};
-    draw(Wall, scene.camera, shaders["mesh"]);
-    Wall.uniform.transform.rotation = {0,-1,0, 1,0,0, 0,0,1};
-    draw(Wall, scene.camera, shaders["mesh"]);
+    draw(Wall1, scene.camera, shaders["mesh"]);
+    draw(Wall2, scene.camera, shaders["mesh"]);
 }
 
 void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
@@ -28,6 +27,7 @@ void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
 
     mesh_drawable body = mesh_primitive_parallelepiped({-S,-S/2,0}, {2*S,0,0}, {0,S,0}, {0,0,S/2});
     body.uniform.color = {0,1,0};
+    body.box = new Collision::rectangle({-2.5*S,-S/2,0}, {-2.5*S,S/2,0}, {S,-S/2,0}, {S,S/2,0});
     Truck.add(body, "body");
 
     mesh_drawable head = mesh_primitive_parallelepiped({0,-S/2,0}, {-S/2,0,0}, {0,S,0}, {0,0,S});
@@ -66,4 +66,6 @@ void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
     Truck.update_local_to_global_coordinates();
 
     Truck.set_shader_for_all_elements(shader);
+    
+    
 }
