@@ -6,7 +6,6 @@ namespace vcl
 {
 
 
-
 mesh_drawable::mesh_drawable()
     :data(),uniform(),shader(0),texture_id(0)
 {}
@@ -103,6 +102,22 @@ void mesh_drawable::update_collision_box(const mat3& rotation){
 
 bool mesh_drawable::collide_border(GLfloat L, GLfloat W){
     return box->collide_border(L, W);
+}
+
+bool mesh_drawable::collides_with(const mesh_drawable& obj){
+    vector<vec3> A_kp = box->get_kp();
+    vector<vec3> B_kp = obj.box->get_kp();
+
+    for(auto p: A_kp)
+        if(obj.box->contains(p)) {
+            return true;
+        }
+
+    for(auto p: B_kp)
+        if(box->contains(p)) {
+            return true;
+        }
+    return false;
 }
 
 }

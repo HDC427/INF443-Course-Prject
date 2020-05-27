@@ -42,6 +42,7 @@ public:
     void update_collision_box(const vec3& transalation);
     void update_collision_box(const mat3& rotation);
     bool collide_border(GLfloat L, GLfloat W);
+    bool collides_with(const mesh_drawable& obj);
 
     /** Data attributes: VAO and VBO as well as the number of triangle */
     mesh_drawable_gpu_data data;

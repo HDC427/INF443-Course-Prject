@@ -11,7 +11,7 @@ using namespace vcl;
     It is used to initialize all part-specific data */
 void scene_model::setup_data(std::map<std::string,GLuint>& shaders, scene_structure& , gui_structure& )
 {
-    set_up_static_models();
+    set_up_static_models(shaders);
     
     set_up_truck(Truck, shaders["mesh"]);
 }
@@ -26,25 +26,26 @@ void scene_model::frame_draw(std::map<std::string,GLuint>& shaders, scene_struct
 
     Truck.update_local_to_global_coordinates();
     draw(Truck, scene.camera);
-
 }
 
 
 void scene_model::keyboard_input(scene_structure& scene, GLFWwindow* window, int key, int scancode, int action, int mods){
     
-    vec3 orientation = Truck["body"].transform.rotation*vec3(-1,0,0);
-    const float v = dt*5;
-    const float L = S_ROOM;
-    const float W = L/2;
+    vec3 orientation = Truck["body"].transform.rotation*vec3(-5,0,0);
+    const float v = dt*10;
+    const float L = 50;
+    const float W = 50;
 
     switch (key)
     {
     case GLFW_KEY_UP:
-        Truck["body"].transform.translation += 0.1*v*orientation;
-        Truck["body"].element.update_collision_box(0.1*v*orientation);
-        if(Truck["body"].element.collide_border(L, W)){
-            Truck["body"].transform.translation -= 0.1*v*orientation;
-            Truck["body"].element.update_collision_box(-0.1*v*orientation);
+        Truck["body"].transform.translation += v*orientation;
+        Truck["body"].element.update_collision_box(v*orientation);
+        if(Truck["body"].element.collide_border(L, W) ||
+           Truck["body"].element.collides_with(wall_0)||
+           Truck["body"].element.collides_with(wall_1)){
+            Truck["body"].transform.translation -= v*orientation;
+            Truck["body"].element.update_collision_box(-v*orientation);
         }
         Truck["front_left_tire"].transform.rotation = {1,0,0, 0,1,0, 0,0,1}; 
         Truck["front_right_tire"].transform.rotation = {1,0,0, 0,1,0, 0,0,1}; 
@@ -55,11 +56,13 @@ void scene_model::keyboard_input(scene_structure& scene, GLFWwindow* window, int
         break;
 
     case GLFW_KEY_DOWN:
-        Truck["body"].transform.translation -= 0.1*v*orientation; 
-        Truck["body"].element.update_collision_box(-0.1*v*orientation);
-        if(Truck["body"].element.collide_border(L, W)){
-            Truck["body"].transform.translation += 0.1*v*orientation;
-            Truck["body"].element.update_collision_box(0.1*v*orientation);
+        Truck["body"].transform.translation -= v*orientation; 
+        Truck["body"].element.update_collision_box(-v*orientation);
+        if(Truck["body"].element.collide_border(L, W) ||
+           Truck["body"].element.collides_with(wall_0)||
+           Truck["body"].element.collides_with(wall_1)){
+            Truck["body"].transform.translation += v*orientation;
+            Truck["body"].element.update_collision_box(v*orientation);
         }
         Truck["front_left_tire"].transform.rotation = {1,0,0, 0,1,0, 0,0,1}; 
         Truck["front_right_tire"].transform.rotation = {1,0,0, 0,1,0, 0,0,1};
@@ -72,7 +75,9 @@ void scene_model::keyboard_input(scene_structure& scene, GLFWwindow* window, int
     case GLFW_KEY_LEFT:
         Truck["body"].transform.rotation = Truck["body"].transform.rotation*rotation_from_axis_angle_mat3({0,0,1},v); 
         Truck["body"].element.update_collision_box(rotation_from_axis_angle_mat3({0,0,1},v));
-        if(Truck["body"].element.collide_border(L, W)){
+        if(Truck["body"].element.collide_border(L, W) ||
+           Truck["body"].element.collides_with(wall_0)||
+           Truck["body"].element.collides_with(wall_1)){
             Truck["body"].transform.rotation = Truck["body"].transform.rotation*rotation_from_axis_angle_mat3({0,0,1},-v); 
             Truck["body"].element.update_collision_box(rotation_from_axis_angle_mat3({0,0,1},-v));
         }
@@ -85,7 +90,9 @@ void scene_model::keyboard_input(scene_structure& scene, GLFWwindow* window, int
     case GLFW_KEY_RIGHT:
         Truck["body"].transform.rotation = Truck["body"].transform.rotation*rotation_from_axis_angle_mat3({0,0,1},-v); 
         Truck["body"].element.update_collision_box(rotation_from_axis_angle_mat3({0,0,1},-v));
-        if(Truck["body"].element.collide_border(L, W)){
+        if(Truck["body"].element.collide_border(L, W) ||
+           Truck["body"].element.collides_with(wall_0)||
+           Truck["body"].element.collides_with(wall_1)){
             Truck["body"].transform.rotation = Truck["body"].transform.rotation*rotation_from_axis_angle_mat3({0,0,1},v); 
             Truck["body"].element.update_collision_box(rotation_from_axis_angle_mat3({0,0,1},v));
         }
