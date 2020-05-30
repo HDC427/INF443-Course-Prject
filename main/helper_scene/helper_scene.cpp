@@ -108,6 +108,9 @@ void gui_start_basic_structure(gui_structure& gui, scene_structure& scene)
     ImGui::Text("Frame: "); ImGui::SameLine();
     ImGui::Checkbox("Camera", &gui.show_frame_camera); ImGui::SameLine();
     ImGui::Checkbox("Worldspace", &gui.show_frame_worldspace);
+    ImGui::Text("Light: "); ImGui::SameLine();
+    ImGui::Checkbox("Room", &gui.room_light); ImGui::SameLine();
+    ImGui::Checkbox("Truck", &gui.truck_light);
     ImGui::Spacing();
 
     if(gui.show_frame_camera)

@@ -27,6 +27,7 @@ struct scene_model : scene_base
     timer_basic timer;
     float dt;
     hierarchy_mesh_drawable Truck;
+    vec3 orientation = vec3(-5,0,0);
 };
 
 

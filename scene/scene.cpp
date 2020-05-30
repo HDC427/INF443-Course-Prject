@@ -26,13 +26,19 @@ void scene_model::frame_draw(std::map<std::string,GLuint>& shaders, scene_struct
 
     Truck.update_local_to_global_coordinates();
     draw(Truck, scene.camera);
+
+    uniform(shaders["mesh"], "room_light_on", gui.room_light);
+    
+    uniform(shaders["mesh"], "truck_light_on",gui.truck_light);
+    uniform(shaders["mesh"], "truck_light", Truck["body"].transform.translation+orientation*0.8+vec3(0,0,S_TRUCK/4));
+    uniform(shaders["mesh"], "orientation", orientation);
 }
 
 
 void scene_model::keyboard_input(scene_structure& scene, GLFWwindow* window, int key, int scancode, int action, int mods){
     
-    vec3 orientation = Truck["body"].transform.rotation*vec3(-5,0,0);
-    const float v = dt*10;
+    orientation = Truck["body"].transform.rotation*vec3(-2.5*S_TRUCK,0,0);
+    const float v = dt*4;
     const float L = 50;
     const float W = 50;
 

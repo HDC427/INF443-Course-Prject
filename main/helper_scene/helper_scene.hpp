@@ -19,6 +19,8 @@ struct gui_structure
 
     bool show_frame_camera     = true;
     bool show_frame_worldspace = false;
+    bool room_light =  true;
+    bool truck_light = false;
 };
 
 
