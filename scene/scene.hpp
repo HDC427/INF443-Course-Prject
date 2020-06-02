@@ -20,6 +20,7 @@ struct scene_model : scene_base
     */
 
     void setup_data(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
+    void setup_depth_FBO(GLuint *depthMapFBO, GLuint *depthMap, gui_structure& gui);
     void frame_draw(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure& gui);
 
     void keyboard_input(scene_structure& scene, GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -27,7 +28,12 @@ struct scene_model : scene_base
     timer_basic timer;
     float dt;
     hierarchy_mesh_drawable Truck;
-    vec3 orientation = vec3(-5,0,0);
+    vec3 truck_orientation = vec3(-5,0,0);
+
+    camera_scene room_light;
+    GLuint room_FBO, room_shadow, truck_FBO, truck_shadow; 
+
+    mesh_drawable test_quad;
 };
 
 

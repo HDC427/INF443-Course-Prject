@@ -1,8 +1,11 @@
 #include "utils/models.hpp"
+#include <vector>
 
 using namespace vcl;
-
+using namespace std;
 /******* Static models ********/
+#pragma region static_models
+vector<mesh_drawable*> static_models;
 
 mesh_drawable surface0;
 mesh_drawable surface1;
@@ -28,6 +31,22 @@ GLuint texture_id_computer;
 /***************************/
 
 void set_up_static_models(std::map<std::string,GLuint>& shaders){
+
+    static_models.push_back(&surface0);
+    static_models.push_back(&surface1);
+    static_models.push_back(&surface2);
+    static_models.push_back(&surface3);
+    static_models.push_back(&surface4);
+    static_models.push_back(&surface5);
+    static_models.push_back(&wall_0);
+    static_models.push_back(&wall_1);
+    static_models.push_back(&table);
+    static_models.push_back(&window1);
+    static_models.push_back(&window2);
+    static_models.push_back(&computer1);
+    static_models.push_back(&computer2);
+    static_models.push_back(&computer3);
+
     mesh quadrangle1;
     mesh quadrangle2;
     mesh quadrangle3;
@@ -50,9 +69,7 @@ void set_up_static_models(std::map<std::string,GLuint>& shaders){
     quadrangle5.connectivity = { {0,1,2}, {0,2,3} };
     wall_0_cpu.connectivity  = { {1,2,6},{1,6,5},{2,3,7},{2,7,6},{3,0,4},{3,4,7} };
     wall_1_cpu.connectivity  = { {0,1,5},{0,5,4},{1,2,6},{1,6,5},{3,0,4},{3,4,7} };
-    // *************************************** //
-    // Convert a mesh to mesh_drawable structure
-    //  = mesh_drawable stores VBO and VAO, and allows to set uniform parameters easily
+
     surface1 = mesh_drawable(quadrangle1);
     surface2 = mesh_drawable(quadrangle2);
     surface3 = mesh_drawable(quadrangle3);
@@ -60,15 +77,7 @@ void set_up_static_models(std::map<std::string,GLuint>& shaders){
     surface5 = mesh_drawable(quadrangle5);
     wall_0   = mesh_drawable(wall_0_cpu);
     wall_1   = mesh_drawable(wall_1_cpu);
-    // attach a default shader to the mesh_drawable element
-    surface1.shader = shaders["mesh"];
-    surface2.shader = shaders["mesh"];
-    surface3.shader = shaders["mesh"];
-    surface4.shader = shaders["mesh"];
-    surface5.shader = shaders["mesh"];
-    wall_0.shader   = shaders["mesh"];
-    wall_1.shader   = shaders["mesh"];
-    // color of the shape (used in the shader)
+    // color of the shape
     surface1.uniform.color = { 1.0f, 1.0f, 1.0f };
     surface2.uniform.color = { 1.0f, 1.0f, 1.0f };
     surface3.uniform.color = { 1.0f, 1.0f, 1.0f };
@@ -144,37 +153,46 @@ void set_up_static_models(std::map<std::string,GLuint>& shaders){
     // computer4.texture_id = texture_id_computer;
 }
 
-void draw_static_models(std::map<std::string,GLuint>& shaders, scene_structure& scene, gui_structure&){
-    // set_gui();
-
-    draw(surface0, scene.camera, shaders["mesh"]);
-
-    draw(table, scene.camera, shaders["mesh"]);
-
-    draw(window1, scene.camera, shaders["mesh"]);
-
-    draw(window2, scene.camera, shaders["mesh"]);
-
-    // draw(computer4, scene.camera, shaders["mesh"]);
-
-    // Drawing call: need to provide the camera information (use the default shader if it has been set previously)
-    draw(surface1, scene.camera);
-    draw(surface2, scene.camera);
-    draw(surface3, scene.camera);
-    draw(surface4, scene.camera);
-    draw(surface5, scene.camera);
+void create_shadow(hierarchy_mesh_drawable& Truck, GLuint depthMapFBO, camera_scene &light_source ,GLuint shader_shadow){
+    /*! @brief draw obj from the point of view of light_source to create a shadow map
+     *  @param depthMapFBO: set up with `setup_depth_FBO`
+     *  @param light_source: take advantage of the similarity between light source and camara
+     *  @param shader: shoulb be set to a shader for shadow drawing, like shaders["shadow"]
+     */
     
-    draw(wall_0, scene.camera);
-    draw(wall_1, scene.camera);
-    
-    draw(computer1, scene.camera);
-    draw(computer2, scene.camera);
-    draw(computer3, scene.camera);
-    draw(computer4, scene.camera);
-   // draw(table, scene.camera);
-  
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    for(int i=1;i<=10;i++){
+        mesh_drawable *obj = static_models[i];
+        // uniform(shader_shadow, "rotation", obj->uniform.transform.rotation);            opengl_debug();
+        // uniform(shader_shadow, "translation", obj->uniform.transform.translation);      opengl_debug();
+        // uniform(shader_shadow, "scaling", obj->uniform.transform.scaling);              opengl_debug();
+        // uniform(shader_shadow, "scaling_axis", obj->uniform.transform.scaling_axis);    opengl_debug();
 
+        // uniform(shader_shadow, "view", light_source.view_matrix());                     opengl_debug();
+        // uniform(shader_shadow, "perspective", light_source.perspective.matrix());       opengl_debug();
+        // draw(obj->data);
+        draw(*obj, light_source, shader_shadow, 0);
+    }
+    // draw(surface0, light_source, shader_shadow, 0);
+    draw(Truck, light_source, shader_shadow);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void draw_static_models(camera_scene& camera, GLuint shader, camera_scene& room_light, GLuint texture_room_light){
+    glUseProgram(shader);
+    glUniform1i(glGetUniformLocation(shader, "texture_room_shadow"), 1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture_room_light);
+    for(auto obj: static_models){
+        uniform(shader, "room_light_view", room_light.view_matrix());
+        uniform(shader, "room_light_perspective", room_light.perspective.matrix());
+        
+        draw(*obj, camera, shader);
+    }
+}
+
+#pragma endregion
 
 void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
     const float S = S_TRUCK;
@@ -221,6 +239,24 @@ void set_up_truck(hierarchy_mesh_drawable& Truck, GLuint shader){
     Truck.update_local_to_global_coordinates();
 
     Truck.set_shader_for_all_elements(shader);
-    
-    
+     
+}
+
+void draw_scene(hierarchy_mesh_drawable& Truck, camera_scene& camera, GLuint shader, camera_scene& room_light, GLuint texture_room_light){
+    glUseProgram(shader);
+    for(auto obj: static_models){
+        uniform(shader, "room_light_view", room_light.view_matrix());
+        uniform(shader, "room_light_perspective", room_light.perspective.matrix());
+        glUniform1i(glGetUniformLocation(shader, "texture_room_shadow"), 1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture_room_light);
+        draw(*obj, camera, shader);
+    }
+
+    Truck.update_local_to_global_coordinates();
+    draw(Truck, camera, shader);
+}
+
+void create_truck_shadow(hierarchy_mesh_drawable& Truck ,GLuint depthMapFBO, camera_scene &light_source, GLuint shader_shadow){
+
 }

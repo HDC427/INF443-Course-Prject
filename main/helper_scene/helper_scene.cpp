@@ -48,12 +48,15 @@ void load_shaders(std::map<std::string,GLuint>& shaders)
     std::cout<<"*** Setup Shader ***"<<std::endl;
 
     shaders["mesh"] = create_shader_program("shaders/mesh/shader.vert.glsl","shaders/mesh/shader.frag.glsl");
+    // glUniform1i(glGetUniformLocation(shaders["mesh"], "texture_sampler"), (GLint)0);
+    
     shaders["mesh_bf"] = create_shader_program("shaders/mesh_back_illumination/mesh.vert.glsl","shaders/mesh_back_illumination/mesh.frag.glsl");
     shaders["wireframe"] = create_shader_program("shaders/wireframe/shader.vert.glsl","shaders/wireframe/shader.geom.glsl","shaders/wireframe/shader.frag.glsl");
     shaders["wireframe_quads"] = create_shader_program("shaders/wireframe_quads/shader.vert.glsl","shaders/wireframe_quads/shader.geom.glsl","shaders/wireframe_quads/shader.frag.glsl");
     shaders["curve"] = create_shader_program("shaders/curve/shader.vert.glsl","shaders/curve/shader.frag.glsl");
     shaders["segment_im"] = create_shader_program("shaders/segment_immediate_mode/shader.vert.glsl","shaders/segment_immediate_mode/shader.frag.glsl");
     shaders["normals"] = create_shader_program("shaders/normals/shader.vert.glsl","shaders/normals/shader.geom.glsl","shaders/normals/shader.frag.glsl");
+    shaders["shadow"] = create_shader_program("shaders/shadow/shadow.vert.glsl", "shaders/shadow/shadow.frag.glsl");
 
     std::cout<<"\t [OK] Shader loaded"<<std::endl;
 }

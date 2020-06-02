@@ -62,9 +62,10 @@ void draw(const mesh_drawable& drawable, const camera_scene& camera, GLuint shad
     // Bind texture only if id != 0
     if(texture_id!=0) {
         assert(glIsTexture(texture_id));
-        glBindTexture(GL_TEXTURE_2D, texture_id);  opengl_debug();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);  opengl_debug();   
     }
-
+    
     // Send all uniform values to the shader
     uniform(shader, "rotation", drawable.uniform.transform.rotation);            opengl_debug();
     uniform(shader, "translation", drawable.uniform.transform.translation);      opengl_debug();
@@ -85,6 +86,7 @@ void draw(const mesh_drawable& drawable, const camera_scene& camera, GLuint shad
     vcl::draw(drawable.data); opengl_debug();
 
     if(texture_id!=0){
+        glActiveTexture(GL_TEXTURE0);
         image_raw white{1,1,image_color_type::rgba,{255,255,255,255}};
         GLuint texture_white = create_texture_gpu(white);
         glBindTexture(GL_TEXTURE_2D, texture_white);

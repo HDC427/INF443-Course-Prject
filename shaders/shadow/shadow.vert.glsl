@@ -1,19 +1,14 @@
 #version 330 core
 
+// ref https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+
 layout (location = 0) in vec4 position;
+
+/** redundant **/
 layout (location = 1) in vec4 normal;
 layout (location = 2) in vec4 color;
 layout (location = 3) in vec2 texture_uv;
-
-out struct fragment_data
-{
-    vec4 position;
-    vec4 normal;
-    vec4 color;
-    vec2 texture_uv;
-    vec4 position_from_room_light;
-} fragment;
-
+/***************/
 
 // model transformation
 uniform vec3 translation = vec3(0.0, 0.0, 0.0);                      // user defined translation
@@ -21,15 +16,10 @@ uniform mat3 rotation = mat3(1.0,0.0,0.0, 0.0,1.0,0.0, 0.0,0.0,1.0); // user def
 uniform float scaling = 1.0;                                         // user defined scaling
 uniform vec3 scaling_axis = vec3(1.0,1.0,1.0);                       // user defined scaling
 
-
-// view transform
+// view transform of the light source
 uniform mat4 view;
 // perspective matrix
 uniform mat4 perspective;
-
-// the point of view of room light
-uniform mat4 room_light_view;
-uniform mat4 room_light_perspective;
 
 void main()
 {
@@ -40,14 +30,7 @@ void main()
     // 4D translation
     vec4 T = vec4(translation,0.0);
 
-
-    fragment.color = color;
-    fragment.texture_uv = texture_uv;
-
-    fragment.normal = R*normal;
     vec4 position_transformed = R*S*position + T;
 
-    fragment.position = position_transformed;
-    fragment.position_from_room_light = room_light_perspective*room_light_view*position_transformed;
     gl_Position = perspective * view * position_transformed;
 }

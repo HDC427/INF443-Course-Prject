@@ -6,9 +6,11 @@ in struct fragment_data
     vec4 normal;
     vec4 color;
     vec2 texture_uv;
+    vec4 position_from_room_light;
 } fragment;
 
 uniform sampler2D texture_sampler;
+uniform sampler2D texture_room_shadow;
 
 out vec4 FragColor;
 
@@ -48,6 +50,22 @@ void calculate_diffuse_specular(out float diffuse_value, out float specular_valu
     }
 }
 
+float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowMap)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}  
+
 void main()
 {
     if(room_light_on) calculate_diffuse_specular(diffuse_room, specular_room, room_light, vec3(0,0,-1), -1.0);
@@ -55,7 +73,8 @@ void main()
 
     vec3 white = vec3(1.0);
     vec4 color_texture = texture(texture_sampler, fragment.texture_uv);
-    vec3 c = (ambiant+diffuse_room+diffuse_truck)*color.rgb*fragment.color.rgb*color_texture.rgb + (specular_room+specular_truck)*white;
+    float room_shadow = ShadowCalculation(fragment.position_from_room_light, texture_room_shadow);
+    vec3 c = (ambiant+diffuse_room*(1-room_shadow)+diffuse_truck)*color.rgb*fragment.color.rgb*color_texture.rgb + (specular_room*(1-room_shadow)+specular_truck)*white;
 
     FragColor = vec4(c, color_texture.a*fragment.color.a*color_alpha);
 }
